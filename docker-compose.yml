@@ -14,7 +14,7 @@ services:
     volumes:
       - ./script.sql:/docker-entrypoint-initdb.d/script.sql
 
-  smoft-backend: 
+  app-backend: 
     build: 
       context: ./backend 
       dockerfile: Dockerfile 
@@ -25,7 +25,7 @@ services:
     depends_on:
       - db 
 
-  smoft-frontend: 
+  app-frontend: 
     restart: always
     build: 
       context: ./frontend 
@@ -34,7 +34,7 @@ services:
     networks:
       - app-network 
     depends_on:
-      - smoft-backend
+      - app-backend
 
 networks:
   app-network: 
