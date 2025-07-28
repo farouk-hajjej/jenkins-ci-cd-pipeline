@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        
         NODE_VERSION = "node-20"
         registry = "faroukhajjej1/projet-devops-test"
         registryCredential = 'dckr_pat_VVIpmnatR2f0aNGVai7aTJ3TfSM'
