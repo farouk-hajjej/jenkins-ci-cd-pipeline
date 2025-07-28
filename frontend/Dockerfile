@@ -4,11 +4,13 @@ WORKDIR /app
 
 COPY package*.json ./
 
-# Supprimer node_modules s'il existe (dans le contexte Docker build ça peut être utile si tu copies node_modules)
-RUN rm -rf node_modules
+RUN npm cache clean --force
 
-RUN npm cache clean --force && npm ci && npm install react-scripts --save
+# Installer les dépendances avec npm ci
+RUN npm ci
 
+# Donner les droits d'exécution à tous les scripts dans node_modules/.bin
+RUN chmod -R u+x ./node_modules/.bin
 
 COPY . .
 
@@ -17,4 +19,3 @@ RUN npm run build
 EXPOSE 3001
 
 CMD [ "npx", "serve", "-s", "build" ]
-#test
