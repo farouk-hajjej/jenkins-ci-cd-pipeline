@@ -31,24 +31,7 @@ pipeline {
             }
         }
 
-        stage('Install Backend Dependencies') {
-            steps {
-                dir('backend') {
-                    echo 'Installing backend dependencies...'
-                    sh 'npm ci'
-                }
-            }
-        }
-
-        stage('Install Frontend Dependencies') {
-            steps {
-                dir('frontend') {
-                    echo 'Installing frontend dependencies...'
-                    sh 'npm ci'
-                }
-            }
-        }
-
+        
         stage('Lint Code') {
             steps {
                 dir('backend') {
@@ -70,9 +53,6 @@ pipeline {
                 }
             }
         }
-
-      
-
       
 
         stage('Build Docker Images') {
@@ -82,6 +62,23 @@ pipeline {
                     backendImage = docker.build("${registry}-backend", "./backend")
                     frontendImage = docker.build("${registry}-frontend", "./frontend")
                 }
+            }
+        }
+        
+        stage('Scan Docker Images (Grype)') {
+            agent {
+                docker {
+                    image 'anchore/grype:latest'
+                    args '-v /var/run/docker.sock:/var/run/docker.sock'
+                }
+            }
+            steps {
+                sh """
+                    docker pull ${registry}-backend:dev
+                    grype ${registry}-backend:dev --fail-on high || true
+                    docker pull ${registry}-frontend:dev
+                    grype ${registry}-frontend:dev --fail-on high || true
+                """
             }
         }
 
