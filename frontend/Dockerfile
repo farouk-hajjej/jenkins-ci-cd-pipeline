@@ -4,7 +4,11 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci
+#RUN npm ci
+RUN npm cache clean --force && \
+    npm ci  && \
+    rm -rf node_modules 
+
 
 COPY . .
 
