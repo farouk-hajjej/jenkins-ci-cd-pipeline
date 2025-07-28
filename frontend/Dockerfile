@@ -1,20 +1,16 @@
-FROM node:lts-slim as runtime
+FROM node:lts-slim as build
 
 WORKDIR /app
 
-# Copier package.json et package-lock.json
 COPY package*.json ./
 
-# Installer les dépendances
-RUN npm cache clean --force && npm install -f
+# Supprimer node_modules s'il existe (dans le contexte Docker build ça peut être utile si tu copies node_modules)
+RUN rm -rf node_modules
 
-# Donner les droits d'exécution aux binaires dans node_modules/.bin
-RUN chmod -R 755 ./node_modules/.bin
+RUN npm cache clean --force && npm ci
 
-# Copier le reste du projet
 COPY . .
 
-# Builder l'application React
 RUN npm run build
 
 EXPOSE 3001
