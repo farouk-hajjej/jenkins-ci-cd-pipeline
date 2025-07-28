@@ -70,18 +70,22 @@ pipeline {
                 }
             }
         }
-        stage('Initialize'){
-        def dockerHome = tool 'myDocker'
-        env.PATH = "${dockerHome}/bin:${env.PATH}"
-       }
 
-        // Tu peux ajouter ici une étape Snyk si tu l'utilises
-         stage('Check Docker') {
-           steps {
-             sh 'docker --version'
-           }
-         
-         }
+        stage('Initialize') {
+            steps {
+                script {
+                    echo "Docker is expected to be installed and accessible via the Docker socket."
+                    // Si besoin d'ajouter des paths ou outils manuellement, fais-le ici
+                }
+            }
+        }
+
+        stage('Check Docker') {
+            steps {
+                sh 'docker --version'
+            }
+        }
+
         stage('Build Docker Images') {
             steps {
                 echo 'Building Docker images...'
