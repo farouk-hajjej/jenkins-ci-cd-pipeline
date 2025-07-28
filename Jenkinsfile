@@ -4,7 +4,7 @@ pipeline {
     environment {
         NODE_VERSION = "node-20"
         registry = "faroukhajjej1/projet-devops-test"
-        registryCredential = 'dckr_pat_VVIpmnatR2f0aNGVai7aTJ3TfSM'
+        registryCredential = 'dockerhub-credentials' // 🔐 Credential sécurisé
         backendImage = ''
         frontendImage = ''
     }
@@ -71,20 +71,9 @@ pipeline {
             }
         }
 
-        stage('Initialize') {
-            steps {
-                script {
-                    echo "Docker is expected to be installed and accessible via the Docker socket."
-                    // Si besoin d'ajouter des paths ou outils manuellement, fais-le ici
-                }
-            }
-        }
+      
 
-        stage('Check Docker') {
-            steps {
-                sh 'docker --version'
-            }
-        }
+      
 
         stage('Build Docker Images') {
             steps {
@@ -99,9 +88,9 @@ pipeline {
         stage('Push Docker Images') {
             steps {
                 script {
-                    docker.withRegistry('', registryCredential) {
-                        backendImage.push('latest')
-                        frontendImage.push('latest')
+                    docker.withRegistry('https://index.docker.io/v1/', registryCredential) {
+                        backendImage.push('v1')
+                        frontendImage.push('v1')
                     }
                 }
             }
