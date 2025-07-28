@@ -9,7 +9,7 @@ COPY package*.json ./
 RUN npm install npm -g
 
 
-RUN npm init -y
+#RUN npm init -y
 
 
 RUN npm install -f
