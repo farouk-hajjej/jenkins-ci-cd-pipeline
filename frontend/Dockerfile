@@ -16,7 +16,7 @@ FROM node:lts-slim as runtime
 
 WORKDIR /app
 
-# On copie uniquement le build final depuis l'étape précédente
+# On copie uniquement le build final depuis l'étape précédente 
 COPY --from=build /app/build ./build
 
 EXPOSE 3001
