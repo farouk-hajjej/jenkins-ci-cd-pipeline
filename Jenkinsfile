@@ -16,7 +16,7 @@ pipeline {
             steps {
                 echo 'Pulling .....'
                 git branch: 'main',
-                    url: 'https://github.com/farouk-hajjej/Github-Actions-DevOps-Project.git'
+                    url: 'https://github.com/farouk-hajjej/jenkins-ci-cd-pipeline.git'
             }
         }
 
