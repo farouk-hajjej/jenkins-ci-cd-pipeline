@@ -70,6 +70,10 @@ pipeline {
                 }
             }
         }
+        stage('Initialize'){
+        def dockerHome = tool 'myDocker'
+        env.PATH = "${dockerHome}/bin:${env.PATH}"
+       }
 
         // Tu peux ajouter ici une étape Snyk si tu l'utilises
          stage('Check Docker') {
