@@ -6,6 +6,7 @@ pipeline {
         registry = "faroukhajjej1/projet-devops-test"
         registryCredential = 'dckr_pat_VVIpmnatR2f0aNGVai7aTJ3TfSM'
         dockerImage = ''
+        
     }
     tools {
     nodejs "${NODE_VERSION}"
