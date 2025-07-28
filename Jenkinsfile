@@ -72,7 +72,12 @@ pipeline {
         }
 
         // Tu peux ajouter ici une étape Snyk si tu l'utilises
-
+         stage('Check Docker') {
+           steps {
+             sh 'docker --version'
+           }
+         
+         }
         stage('Build Docker Images') {
             steps {
                 echo 'Building Docker images...'
