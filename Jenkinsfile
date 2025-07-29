@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     environment {
+        
         NODE_VERSION = "node-20"
         registry = "faroukhajjej1/projet-devops-test"
         registryCredential = 'dockerhub-credentials' // 🔐 DockerHub credentials ID
