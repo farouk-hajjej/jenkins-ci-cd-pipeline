@@ -65,7 +65,19 @@ pipeline {
             }
         }
         
-        stage('Scan Docker Images (Grype)') {
+      
+
+        stage('Push Docker Images') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', registryCredential) {
+                        backendImage.push('dev')
+                        frontendImage.push('dev')
+                    }
+                }
+            }
+        }
+          stage('Scan Docker Images (Grype)') {
             agent {
                 docker {
                     image 'anchore/grype:latest'
@@ -79,17 +91,6 @@ pipeline {
                     docker pull ${registry}-frontend:dev
                     grype ${registry}-frontend:dev --fail-on high || true
                 """
-            }
-        }
-
-        stage('Push Docker Images') {
-            steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', registryCredential) {
-                        backendImage.push('v1')
-                        frontendImage.push('v1')
-                    }
-                }
             }
         }
 
@@ -115,14 +116,7 @@ pipeline {
             }
         }
 
-        stage('Cleanup') {
-            steps {
-                echo 'Cleaning up...'
-                sh 'docker-compose down'
-            }
-        }
-    }
-
+  
     post {
         always {
             echo 'Pipeline finished.'
