@@ -8,6 +8,7 @@ pipeline {
         backendImage = ''
         frontendImage = ''
     }
+    
 
     tools {
         nodejs "${NODE_VERSION}"
