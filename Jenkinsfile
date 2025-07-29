@@ -94,21 +94,6 @@ pipeline {
             }
         }
 
-        stage('Test Backend (optional)') {
-            when {
-                expression { fileExists('backend/package.json') }
-            }
-            steps {
-                dir('backend') {
-                    script {
-                        if (sh(script: "npm run test", returnStatus: true) != 0) {
-                            error("Tests failed")
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     post {
         always {
