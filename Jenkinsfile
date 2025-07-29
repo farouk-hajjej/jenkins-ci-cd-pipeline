@@ -2,10 +2,9 @@ pipeline {
     agent any
 
     environment {
-        
         NODE_VERSION = "node-20"
         registry = "faroukhajjej1/projet-devops-test"
-        registryCredential = 'dockerhub-credentials' // 🔐 DockerHub credentials ID
+        registryCredential = 'dockerhub-credentials'
     }
 
     tools {
@@ -20,11 +19,11 @@ pipeline {
             }
         }
 
-        stage('Date') {
+        stage('Show Date') {
             steps {
                 script {
                     def date = new Date()
-                    def sdf = new java.text.SimpleDateFormat("MM/dd/yyyy")
+                    def sdf = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
                     echo "Build Date: ${sdf.format(date)}"
                 }
             }
@@ -56,10 +55,10 @@ pipeline {
 
         stage('Build Docker Images') {
             steps {
-                echo 'Building Docker images...'
                 script {
-                    backendImage = docker.build("${registry}-backend", "./backend")
-                    frontendImage = docker.build("${registry}-frontend", "./frontend")
+                    echo 'Building Docker images...'
+                    backendImage = docker.build("${registry}-backend", "backend")
+                    frontendImage = docker.build("${registry}-frontend", "frontend")
                 }
             }
         }
@@ -78,6 +77,7 @@ pipeline {
         stage('Scan Docker Images (Grype)') {
             steps {
                 script {
+                    echo 'Scanning Docker images with Grype...'
                     sh """
                         docker pull ${registry}-backend:dev
                         docker pull ${registry}-frontend:dev
@@ -94,17 +94,17 @@ pipeline {
                 sh 'docker-compose up -d --build'
             }
         }
-
+    }
 
     post {
         always {
             echo 'Pipeline finished.'
         }
-        failure {
-            echo 'Pipeline failed.'
-        }
         success {
             echo 'Pipeline succeeded.'
+        }
+        failure {
+            echo 'Pipeline failed.'
         }
     }
 }
