@@ -4,11 +4,8 @@ pipeline {
     environment {
         NODE_VERSION = "node-20"
         registry = "faroukhajjej1/projet-devops-test"
-        registryCredential = 'dockerhub-credentials' // 🔐 Credential sécurisé
-        backendImage = ''
-        frontendImage = ''
+        registryCredential = 'dockerhub-credentials' // 🔐 DockerHub credentials ID
     }
-    
 
     tools {
         nodejs "${NODE_VERSION}"
@@ -32,13 +29,14 @@ pipeline {
             }
         }
 
-        
         stage('Lint Code') {
             steps {
                 dir('backend') {
-                    sh 'npm run lint || true' // adapte si tu as ESLint configuré
+                    sh 'npm install'
+                    sh 'npm run lint || true'
                 }
                 dir('frontend') {
+                    sh 'npm install'
                     sh 'npm run lint || true'
                 }
             }
@@ -54,7 +52,6 @@ pipeline {
                 }
             }
         }
-      
 
         stage('Build Docker Images') {
             steps {
@@ -65,8 +62,6 @@ pipeline {
                 }
             }
         }
-        
-      
 
         stage('Push Docker Images') {
             steps {
@@ -78,20 +73,17 @@ pipeline {
                 }
             }
         }
-          stage('Scan Docker Images (Grype)') {
-            agent {
-                docker {
-                    image 'anchore/grype:latest'
-                    args '-v /var/run/docker.sock:/var/run/docker.sock'
-                }
-            }
+
+        stage('Scan Docker Images (Grype)') {
             steps {
-                sh """
-                    docker pull ${registry}-backend:dev
-                    grype ${registry}-backend:dev --fail-on high || true
-                    docker pull ${registry}-frontend:dev
-                    grype ${registry}-frontend:dev --fail-on high || true
-                """
+                script {
+                    sh """
+                        docker pull ${registry}-backend:dev
+                        docker pull ${registry}-frontend:dev
+                        docker run --rm -v /var/run/docker.sock:/var/run/docker.sock anchore/grype:latest ${registry}-backend:dev --fail-on high || true
+                        docker run --rm -v /var/run/docker.sock:/var/run/docker.sock anchore/grype:latest ${registry}-frontend:dev --fail-on high || true
+                    """
+                }
             }
         }
 
@@ -117,7 +109,7 @@ pipeline {
             }
         }
     }
-  
+
     post {
         always {
             echo 'Pipeline finished.'
